@@ -1,10 +1,9 @@
 int w=400,h=400;
-int sx=w/2,sy=h/2;
-int px,py;
-int cr=255,cg=10,cb=100;
+int w2=w/2,h2=h/2;
 
-int[][] matriz = new int[w][h];
-int[][] matrizSemillas = new int[w][h];
+int[][] matrizCrecimiento = new int[w][h];
+int px=0,py=0;
+
 
 void setup()
 {
@@ -13,72 +12,56 @@ void setup()
   {
     for(int j=0;j<h;j++)
     {
-      matriz[i][j]=0;
-      matrizSemillas[i][j]=0;
+      matrizCrecimiento[i][j]=0;
     }
   }
-  matrizSemillas[sx][sy]=1;
+  matrizCrecimiento[w2][h2]=1;
 }
-
-
-
 
 void draw()
 {
-
-
-  
-  for(int i=0;i<100;i++)
+  background(127);
+  //Posicion particula de salida
+  switch(floor(random(5)))
   {
-    px=int(random(w));
-    py=int(random(h));
-    matriz[px][py]=1;
+    case 1:
+      px=floor(random(h));
+      py=0;
+      //matrizCrecimiento[px][py]=1;
+      break;
+    case 2:
+      px=0;
+      py=floor(random(w));
+      //matrizCrecimiento[px][py]=1;
+      break;
+    case 3:
+      px=floor(random(h));
+      py=w-1;
+      //matrizCrecimiento[px][py]=1;
+      break;
+    case 4:
+      px=h-1;
+      py=floor(random(w));
+      //matrizCrecimiento[px][py]=1;
+      break;
   }
- 
+  
+  //Pinta matriz
   for(int i=0;i<w;i++)
   {
     for(int j=0;j<h;j++)
     {
-      if(matriz[i][j]==1)
+      if(matrizCrecimiento[i][j]==1)
       {
-        //stroke(255,0,255,255);
-        //point(i,j);
-        for(int k=0;k<w;k++)
-        {
-          for(int l=0;l<h;l++)
-          {
-            if(matrizSemillas[k][l]==2)
-            {
-              if(calculaDistancia(k,l,i,j)<=15)
-              {
-                matrizSemillas[i][j]=1;
-              }
-            }
-          }
-        }
-      }      
-    }
-  }
-  
-  for(int i=0;i<w;i++)
-  {
-    for(int j=0;j<h;j++)
-    {
-      if(matrizSemillas[i][j]==1)
-      {        
-        fill(cr,cg,cb,20);       
-        ellipse(i,j,5,5);
-        matrizSemillas[i][j]++;
+        stroke(255);
+        point(i,j);
       }
-      //matriz[i][j]=0;
-      
     }
   }
   
+  
+ 
+  
 }
 
-float calculaDistancia(int x1,int y1,int x2,int y2)
-{
-  return(sqrt(pow(abs(x1-x2),2)+pow(abs(y1-y2),2)));
 
-}
