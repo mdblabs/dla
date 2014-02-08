@@ -1,4 +1,4 @@
-int w=400,h=400;
+int w=800,h=800;
 int w2=w/2,h2=h/2;
 
 int[][] matrizCrecimiento = new int[w][h];
@@ -103,9 +103,17 @@ void draw()
     }
   }
   agregacion=0;
-  lado++;
-  //if(lado==(h/2))
-    //while(true);
+  if(calculaDistancia(px,py,w2,h2)>=(lado-5))
+  {
+    println(lado);
+    lado++;
+    if(lado==(h/2-5))
+    {
+      println("Fin!");
+      saveFrame("dla1.png");
+      while(true);
+    }
+  }
   
  
   
