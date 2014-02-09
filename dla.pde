@@ -1,19 +1,35 @@
-int w=800,h=800;
-int w2=w/2,h2=h/2;
+import gifAnimation.*;
+
+int w=200, h=200;
+int w2=w/2, h2=h/2;
 
 int[][] matrizCrecimiento = new int[w][h];
-int px=0,py=0;
+int px=0, py=0;
 int lado=1;
 int agregacion=0;
 int nuevaParticula=0;
+//Pintado matriz
+boolean pintaFrame=true;
 
+//Generador de gifs
+boolean generaGif=true;
+int gifFrameRate=50;
+int frameCounter=0;
+GifMaker gifExport;
 
-void setup()
+public void setup()
 {
-  size(w,h);
-  for(int i=0;i<w;i++)
+  if ((generaGif==true)&&(pintaFrame==true))
   {
-    for(int j=0;j<h;j++)
+    gifExport = new GifMaker(this, "examples/dlaGIF.gif");
+    gifExport.setRepeat(1);  
+    gifExport.setTransparent(255, 255, 255);
+  }
+
+  size(w, h);
+  for (int i=0;i<w;i++)
+  {
+    for (int j=0;j<h;j++)
     {
       matrizCrecimiento[i][j]=0;
     }
@@ -25,98 +41,106 @@ void draw()
 {
   background(127);
   //Posicion particula de salida
-  
-  while(agregacion==0)
+
+  while (agregacion==0)
   {
-    if(nuevaParticula==0)
+    if (nuevaParticula==0)
     {
       switch(floor(random(5)))
       {
-        case 1:
-          px=floor(random(w/2-lado,w/2+lado));
-          py=h/2-lado;
-          //matrizCrecimiento[px][py]=1;
-          break;
-        case 2:
-          px=w/2-lado;
-          py=floor(random(h/2-lado,h/2+lado));
-          //matrizCrecimiento[px][py]=1;
-          break;
-        case 3:
-          px=floor(random(w/2-lado,w/2+lado));
-          py=h/2+lado;
-          //matrizCrecimiento[px][py]=1;
-          break;
-        case 4:
-          px=w/2+lado;
-          py=floor(random(h/2-lado,h/2+lado));
-          //matrizCrecimiento[px][py]=1;
-          break;
+      case 1:
+        px=floor(random(w/2-lado, w/2+lado));
+        py=h/2-lado;
+        //matrizCrecimiento[px][py]=1;
+        break;
+      case 2:
+        px=w/2-lado;
+        py=floor(random(h/2-lado, h/2+lado));
+        //matrizCrecimiento[px][py]=1;
+        break;
+      case 3:
+        px=floor(random(w/2-lado, w/2+lado));
+        py=h/2+lado;
+        //matrizCrecimiento[px][py]=1;
+        break;
+      case 4:
+        px=w/2+lado;
+        py=floor(random(h/2-lado, h/2+lado));
+        //matrizCrecimiento[px][py]=1;
+        break;
       }
       nuevaParticula=1;
     }
-    
-    for(int i=px-1;i<=px+1;i++)
+
+    if ((px>0)&&(py>0)&&(px<w-1)&&(py<h-1))
     {
-      for(int j=py-1;j<=py+1;j++)
+      for (int i=px-1;i<=px+1;i++)
       {
-        if(matrizCrecimiento[i][j]==1)
+        for (int j=py-1;j<=py+1;j++)
         {
-          agregacion=1;
-          nuevaParticula=0; 
-          matrizCrecimiento[px][py]=1;
+          if (matrizCrecimiento[i][j]==1)
+          {
+            agregacion=1;
+            nuevaParticula=0; 
+            matrizCrecimiento[px][py]=1;
+          }
         }
       }
     }
-    
+
     switch(floor(random(5)))
     {
-      case 1:
-        px++;
-        break;
-      case 2:
-        px--;
-        break;
-      case 3:
-        py++;
-        break;
-      case 4:
-        py--;
-        break;
+    case 1:
+      px++;
+      break;
+    case 2:
+      px--;
+      break;
+    case 3:
+      py++;
+      break;
+    case 4:
+      py--;
+      break;
     }
-    
-    if((px>w2+lado)||(px<w2-lado)||(py>h2+lado)||(py<h2-lado))
-      nuevaParticula=0;       
-  }  
-  
+
+    if ((px>w2+lado)||(px<w2-lado)||(py>h2+lado)||(py<h2-lado))
+      nuevaParticula=0;
+  }
+
+  //Resetea generacion de particulas
+  agregacion=0;  
+
   //Pinta matriz
-  for(int i=0;i<w;i++)
+  if (pintaFrame==true)
   {
-    for(int j=0;j<h;j++)
+    pintaMatriz(matrizCrecimiento);
+    if (generaGif==true)
     {
-      if(matrizCrecimiento[i][j]==1)
+      if (frameCounter==gifFrameRate)
       {
-        stroke(255);
-        point(i,j);
-        //matrizCrecimiento[i][j]=0;
+        gifExport.setDelay(1);
+        gifExport.addFrame();
+        frameCounter=0;
       }
+      frameCounter++;
     }
   }
-  agregacion=0;
-  if(calculaDistancia(px,py,w2,h2)>=(lado-5))
+
+  //Controla radio(lado) y salida  
+  if (calculaDistancia(px, py, w2, h2)>=(lado-10))
   {
-    println(lado);
     lado++;
-    if(lado==(h/2-5))
+    if (lado==(h/2-5))
     {
       println("Fin!");
-      saveFrame("dla1.png");
-      while(true);
+      //saveFrame("dla1.png");
+      if ((generaGif==true)&&(pintaFrame==true))
+      {
+        gifExport.finish();
+      }
+      exit();
     }
   }
-  
- 
-  
 }
-
 
